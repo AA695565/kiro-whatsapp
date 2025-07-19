@@ -541,11 +541,13 @@ function App() {
           
           {msg.type === 'file' && (
             <div className="message-file">
-              <div className="file-icon">📄</div>
-              <div className="file-info">
-                <div className="file-name">{msg.message}</div>
-                <div className="file-size">{(msg.media.size / 1024).toFixed(1)} KB</div>
-              </div>
+              <a href={msg.media.data} download={msg.media.name} className="file-download-link">
+                <div className="file-icon">📄</div>
+                <div className="file-info">
+                  <div className="file-name">{msg.message}</div>
+                  <div className="file-size">{(msg.media.size / 1024).toFixed(1)} KB</div>
+                </div>
+              </a>
             </div>
           )}
           
