@@ -8,14 +8,37 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
+    origin: process.env.NODE_ENV === 'production' 
+      ? [
+          "https://whatsapp-clone-frontend.onrender.com", 
+          "https://whatsapp-clone-api.onrender.com"
+        ] 
+      : "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
-app.use(cors());
+// Configure CORS for production
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production'
+    ? [
+        "https://whatsapp-clone-frontend.onrender.com",
+        "https://whatsapp-clone-api.onrender.com"
+      ]
+    : "http://localhost:3000",
+  credentials: true
+}));
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Serve React app in production
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+  });
+}
 
 // In-memory storage for rooms and messages
 const rooms = new Map();
