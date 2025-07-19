@@ -6,10 +6,14 @@ import './App.css';
 
 // Use the appropriate server URL based on environment
 const SERVER_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://whatsapp-clone-api.onrender.com'
+  ? 'https://kiro-whatsapp-1.onrender.com'  // Your actual deployed server URL
   : 'http://localhost:5000';
 
-const socket = io(SERVER_URL);
+const socket = io(SERVER_URL, {
+  transports: ['websocket', 'polling'],
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000
+});
 
 function App() {
   const [roomCode, setRoomCode] = useState('');
