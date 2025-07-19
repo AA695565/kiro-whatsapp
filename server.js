@@ -26,19 +26,18 @@ app.use(cors({
 
 app.use(express.json({ limit: '50mb' }));
 
-// In production, we'll serve API endpoints only
-// The frontend will be deployed separately
+// API health endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'WhatsApp Clone API is running' });
+});
+
+// Serve static files from React build folder in production
 if (process.env.NODE_ENV === 'production') {
-  app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'WhatsApp Clone API is running' });
-  });
+  app.use(express.static(path.join(__dirname, 'client/build')));
   
-  // Fallback route
+  // All other GET requests not handled before will return the React app
   app.get('*', (req, res) => {
-    res.json({ 
-      message: 'WhatsApp Clone API Server', 
-      note: 'This is the API server only. Please access the frontend at the separate frontend URL.' 
-    });
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
   });
 }
 
