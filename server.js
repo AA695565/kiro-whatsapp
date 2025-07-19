@@ -9,34 +9,36 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: process.env.NODE_ENV === 'production' 
-      ? [
-          "https://whatsapp-clone-frontend.onrender.com", 
-          "https://whatsapp-clone-api.onrender.com"
-        ] 
+      ? '*'  // Allow any origin in production
       : "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true
   }
 });
 
-// Configure CORS for production
+// Configure CORS for production - allow any origin for easier client deployment
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? [
-        "https://whatsapp-clone-frontend.onrender.com",
-        "https://whatsapp-clone-api.onrender.com"
-      ]
+    ? '*'  // Allow any origin in production
     : "http://localhost:3000",
   credentials: true
 }));
 
 app.use(express.json({ limit: '50mb' }));
-app.use(express.static(path.join(__dirname, 'client/build')));
 
-// Serve React app in production
+// In production, we'll serve API endpoints only
+// The frontend will be deployed separately
 if (process.env.NODE_ENV === 'production') {
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', message: 'WhatsApp Clone API is running' });
+  });
+  
+  // Fallback route
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+    res.json({ 
+      message: 'WhatsApp Clone API Server', 
+      note: 'This is the API server only. Please access the frontend at the separate frontend URL.' 
+    });
   });
 }
 
