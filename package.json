@@ -8,7 +8,8 @@
     "dev": "concurrently \"node server.js\" \"npm run client\"",
     "client": "cd client && npm start",
     "build": "cd client && npm install --legacy-peer-deps && npm run build",
-    "install-client": "cd client && npm install --legacy-peer-deps"
+    "install-client": "cd client && npm install --legacy-peer-deps",
+    "postinstall": "npm run install-client && npm run build"
   },
   "engines": {
     "node": ">=16.0.0"
